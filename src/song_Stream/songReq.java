@@ -10,6 +10,7 @@ public class songReq {
 	private String UserID;
 	private String Username;
 	private String PhoneNO;
+	private String ReqID;
 	
 	public songReq(song_info si, user_info ui) {
 		this.songid = si.getSongid();
@@ -19,6 +20,14 @@ public class songReq {
 		this.UserID = ui.getUserID();
 		this.Username = ui.getUsername();
 		this.PhoneNO = ui.getPhoneNO();
+	}
+	
+	public String getReqID() {
+		return ReqID;
+	}
+
+	public void setReqID(String reqID) {
+		ReqID = reqID;
 	}
 
 	public String getSongid() {
@@ -80,7 +89,8 @@ public class songReq {
 	@Override
 	public String toString() {
 		return "songReq [songid=" + songid + ", songname=" + songname + ", artiste=" + artiste + ", duration="
-				+ duration + ", UserID=" + UserID + ", Username=" + Username + ", PhoneNO=" + PhoneNO + "]";
+				+ duration + ", UserID=" + UserID + ", Username=" + Username + ", PhoneNO=" + PhoneNO + ", ReqID="
+				+ ReqID + "]";
 	}
 	
 }

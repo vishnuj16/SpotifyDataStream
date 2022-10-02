@@ -1,14 +1,9 @@
 package song_Stream;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.io.BufferedWriter;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 
 import com.google.gson.Gson;
 
@@ -17,13 +12,6 @@ public class song_generation {
 
 	public static void main(String[] args) throws InterruptedException, IOException
 	{
-		//System.out.println("Hello World!");
-		/*File file = new File("songs-info.json");
-		FileWriter fw = new FileWriter(file,true);
-		BufferedWriter bw = new BufferedWriter(fw);*/
-		
-		//String ID = UUID.randomUUID().toString();
-		
 		RandDataGen rand = new RandDataGen();
 		
 		String[] IDS = new String[10];
@@ -77,49 +65,56 @@ public class song_generation {
 		
 		while(true)
 		{
-			song_info si = new song_info();
-			user_info ui = new user_info();
+			int records = rand.randIndex(15);
+			for (int j=0; j< records ; j++)
+			{
+				song_info si = new song_info();
+				user_info ui = new user_info();
+				
+				int n = sl.size();
+				int index = RandDataGen.randIndex(n);
+				
+				int i=0;
+				String Artiste = null, song= null;
+				for (Map.Entry mapElement : sl.entrySet()) {
+		            Artiste= (String)mapElement.getKey();
+		  
+		            song= (String)mapElement.getValue();
+		  
+		            //System.out.println(key + " : "+ value);
+		            if (i==index)
+		            {
+		            	break;
+		            }
+		            else
+		            {
+		            	i++;
+		            	continue;
+		            }
+		        }
+				si.setArtiste(Artiste);
+				si.setSongname(song);
+				si.setSongid(IDS[i]);
+				si.setDuration(durations[i]);
+				
+				n = IDSuser.length;
+				index = RandDataGen.randIndex(n);
+				ui.setUserID(IDSuser[index]);
+				ui.setUsername(names[index]);
+				ui.setPhoneNO(phone[index]);
+				
+				songReq sq = new songReq(si,ui);
+				String reqid = UUID.randomUUID().toString();
+				sq.setReqID(reqid);
+				
+				String gson = new Gson().toJson(sq);
+				System.out.println(gson);
+				TestKafkaProducer.sendDataToKafka("spotifystream", gson, sq.getReqID());
+				//bw.write(si.toString()+"\n");
+			}
 			
-			int n = sl.size();
-			int index = RandDataGen.randIndex(n);
-			
-			int i=0;
-			String Artiste = null, song= null;
-			for (Map.Entry mapElement : sl.entrySet()) {
-	            Artiste= (String)mapElement.getKey();
-	  
-	            song= (String)mapElement.getValue();
-	  
-	            //System.out.println(key + " : "+ value);
-	            if (i==index)
-	            {
-	            	break;
-	            }
-	            else
-	            {
-	            	i++;
-	            	continue;
-	            }
-	        }
-			si.setArtiste(Artiste);
-			si.setSongname(song);
-			si.setSongid(IDS[i]);
-			si.setDuration(durations[i]);
-			
-			n = IDSuser.length;
-			index = RandDataGen.randIndex(n);
-			ui.setUserID(IDSuser[index]);
-			ui.setUsername(names[index]);
-			ui.setPhoneNO(phone[index]);
-			
-			songReq sq = new songReq(si,ui);
-			
-			//Gson gson = new Gson();
-			//json = gson.toJson(si);
-			System.out.println(new Gson().toJson(sq));
-			//bw.write(si.toString()+"\n");
-			Thread.sleep(1000);
-
+			System.out.println("Sent " + records + " Records To Kafka \n_______");
+			Thread.sleep(2000);
 		}
 		
 	}
